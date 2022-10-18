@@ -1,13 +1,14 @@
 const koa = require("koa");
-const userRouter = require("../router/user.router");
 const bodyParser = require("koa-bodyParser");
 const errorHandle = require("./error-handle");
+const useRoutes = require("../router");
 
 const app = new koa();
 
+app.useRoutes = useRoutes;
+
 app.use(bodyParser());
-app.use(userRouter.routes());
-app.use(userRouter.allowedMethods());
+app.useRoutes();
 app.on("error", errorHandle);
 
 module.exports = app;
