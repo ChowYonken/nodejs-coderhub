@@ -50,12 +50,21 @@ const verifyAuth = async (ctx, next) => {
     ctx.app.emit("error", error, ctx);
   }
 };
-
+// 权限认证
 const verifyPermission = async (ctx, next) => {
+  // 1.获取key值
+  const [resourceKey] = Object.keys(ctx.params);
+  // 去除key值后面的Id字母
+  const tableName = resourceKey.replace("Id", "");
+  // 获取value值
+  const resourceId = ctx.params[resourceKey];
   const { id } = ctx.user;
-  const { momentId } = ctx.params;
   try {
-    const isPermission = await authService.checkMoment(momentId, id);
+    const isPermission = await authService.checkResource(
+      tableName,
+      resourceId,
+      id
+    );
     if (!isPermission) throw new Error();
     await next();
   } catch (err) {
