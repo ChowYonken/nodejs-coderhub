@@ -28,6 +28,7 @@ const verifyUser = async (ctx, next) => {
   await next();
 };
 
+// token验证
 const verifyAuth = async (ctx, next) => {
   // 1.获取token
   const authorization = ctx.headers.authorization;
