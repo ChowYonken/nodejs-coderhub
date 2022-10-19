@@ -34,6 +34,12 @@ class CommentService {
     const [result] = await connections.execute(statement, [commentId]);
     return result;
   }
+  // 获取评论
+  async getCommentsByMomentId(momentId) {
+    const statement = `SELECT * FROM comment WHERE moment_id = ?;`;
+    const [result] = await connections.execute(statement, [momentId]);
+    return result;
+  }
 }
 
 module.exports = new CommentService();
