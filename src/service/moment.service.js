@@ -1,12 +1,12 @@
 const connections = require("../app/database");
 
-const sqlFragment = `
-  SELECT
-    m.id id, m.content content, m.createAt createTime, m.updateAt updateTime,
-    JSON_OBJECT("id", u.id, "name", u.name) author
-  FROM moment m
-  LEFT JOIN user u ON m.user_id = u.id
-`;
+// const sqlFragment = `
+//   SELECT
+//     m.id id, m.content content, m.createAt createTime, m.updateAt updateTime,
+//     JSON_OBJECT("id", u.id, "name", u.name) author
+//   FROM moment m
+//   LEFT JOIN user u ON m.user_id = u.id
+// `;
 
 class MomentService {
   // 发布动态
@@ -18,7 +18,11 @@ class MomentService {
   // 获取单个动态
   async getMomentById(momentId) {
     const statement = `
-      ${sqlFragment}
+      SELECT
+        m.id id, m.content content, m.createAt createTime, m.updateAt updateTime,
+        JSON_OBJECT("id", u.id, "name", u.name) author
+      FROM moment m
+      LEFT JOIN user u ON m.user_id = u.id
       WHERE m.id = ?;   
     `;
     const [result] = await connections.execute(statement, [momentId]);
@@ -27,8 +31,13 @@ class MomentService {
   // 获取多个动态
   async getMomentList(offset, size) {
     const statement = `
-      ${sqlFragment}
-      LIMIT ?, ?;   
+      SELECT
+        m.id id, m.content content, m.createAt createTime, m.updateAt updateTime,
+        JSON_OBJECT("id", u.id, "name", u.name) author,
+        (SELECT COUNT(*) FROM comment c WHERE c.moment_id = m.id) commentCount
+      FROM moment m
+      LEFT JOIN user u ON m.user_id = u.id
+      LIMIT ?, ?;    
     `;
     const [result] = await connections.execute(statement, [offset, size]);
     return result;
