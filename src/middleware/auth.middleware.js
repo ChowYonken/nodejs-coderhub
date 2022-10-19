@@ -1,5 +1,6 @@
 const errorTypes = require("../constants/error-types");
 const userService = require("../service/user.service");
+const authService = require("../service/auth.service");
 const md5password = require("../utils/password-handle");
 const jwt = require("jsonwebtoken");
 const { PUBLIC_KEY } = require("../app/config");
@@ -33,7 +34,6 @@ const verifyAuth = async (ctx, next) => {
   // 1.获取token
   const authorization = ctx.headers.authorization;
   if (!authorization) {
-    console.log(111);
     const error = new Error(errorTypes.UNAUTHORIZATION);
     return ctx.app.emit("error", error, ctx);
   }
@@ -51,7 +51,21 @@ const verifyAuth = async (ctx, next) => {
   }
 };
 
+const verifyPermission = async (ctx, next) => {
+  const { id } = ctx.user;
+  const { momentId } = ctx.params;
+  try {
+    const isPermission = await authService.checkMoment(momentId, id);
+    if (!isPermission) throw new Error();
+    await next();
+  } catch (err) {
+    const error = new Error(errorTypes.UNPERMISSION);
+    return ctx.app.emit("error", error, ctx);
+  }
+};
+
 module.exports = {
   verifyUser,
   verifyAuth,
+  verifyPermission,
 };

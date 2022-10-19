@@ -22,6 +22,19 @@ class MomentController {
     const result = await momentService.getMomentList(offset, size);
     ctx.body = result;
   }
+  // 修改动态
+  async update(ctx, next) {
+    const { momentId } = ctx.request.params;
+    const { content } = ctx.request.body;
+    const result = await momentService.update(content, momentId);
+    ctx.body = result;
+  }
+  // 删除动态
+  async remove(ctx, next) {
+    const { momentId } = ctx.params;
+    const result = await momentService.remove(momentId);
+    ctx.body = result;
+  }
 }
 
 module.exports = new MomentController();
