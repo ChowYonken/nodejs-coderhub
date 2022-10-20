@@ -13,6 +13,12 @@ class LabelService {
     const [result] = await connections.execute(statement, [name]);
     return result[0];
   }
+  // 获取标签
+  async getLabels(offset, size) {
+    const statement = `SELECT * FROM label LIMIT ?,?;`;
+    const [result] = await connections.execute(statement, [offset, size]);
+    return result;
+  }
 }
 
 module.exports = new LabelService();
