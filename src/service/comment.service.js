@@ -36,7 +36,14 @@ class CommentService {
   }
   // 获取评论
   async getCommentsByMomentId(momentId) {
-    const statement = `SELECT * FROM comment WHERE moment_id = ?;`;
+    const statement = `
+    SELECT 
+      c.id, c.content, c.comment_id commentId, c.createAt createTime,
+      JSON_OBJECT('id', u.id, 'name', u.name) user
+    FROM comment c
+    LEFT JOIN user u ON c.user_id = u.id
+    WHERE moment_id = ?;
+    `;
     const [result] = await connections.execute(statement, [momentId]);
     return result;
   }
