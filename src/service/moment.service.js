@@ -60,6 +60,18 @@ class MomentService {
     const [result] = await connections.execute(statement, [momentId]);
     return result;
   }
+  // 动态添加标签
+  async addLabel(momentId, labelId) {
+    const statement = `INSERT INTO moment_label (moment_id, label_id) VALUES (?, ?);`;
+    const [result] = await connections.execute(statement, [momentId, labelId]);
+    return result;
+  }
+  // 判断动态是否存在这个标签（查询关系表）
+  async hasLabel(momentId, labelId) {
+    const statement = `SELECT * FROM moment_label WHERE moment_id = ? AND label_id = ?;`;
+    const [result] = await connections.execute(statement, [momentId, labelId]);
+    return result[0] ? true : false;
+  }
 }
 
 module.exports = new MomentService();

@@ -9,7 +9,9 @@ const {
   list,
   update,
   remove,
+  addLabel,
 } = require("../controller/moment.controller");
+const { verifyLabelExists } = require("../middleware/label.middelware");
 
 const momentRouter = new Router({ prefix: "/moment" });
 
@@ -27,5 +29,14 @@ momentRouter.patch("/:momentId", verifyAuth, verifyPermission, update);
 
 // 删除动态接口
 momentRouter.delete("/:momentId", verifyAuth, verifyPermission, remove);
+
+// 动态添加标签
+momentRouter.post(
+  "/:momentId/labels",
+  verifyAuth,
+  verifyPermission,
+  verifyLabelExists,
+  addLabel
+);
 
 module.exports = momentRouter;
