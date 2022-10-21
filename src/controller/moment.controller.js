@@ -1,4 +1,6 @@
 const momentService = require("../service/moment.service");
+const fs = require("fs");
+const { PICTURE_PATH } = require("../constants/file-path");
 
 class MomentController {
   // 发布动态
@@ -48,6 +50,13 @@ class MomentController {
       }
     }
     ctx.body = "给动态添加标签成功";
+  }
+  // 获取动态配图url地址
+  async fileInfo(ctx, next) {
+    const { filename } = ctx.params;
+    const fileInfo = await momentService.getFileByFileName(filename);
+    ctx.response.set("content-type", fileInfo.mimetype);
+    ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`);
   }
 }
 

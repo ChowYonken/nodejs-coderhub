@@ -10,6 +10,7 @@ const {
   update,
   remove,
   addLabel,
+  fileInfo,
 } = require("../controller/moment.controller");
 const { verifyLabelExists } = require("../middleware/label.middelware");
 
@@ -38,5 +39,8 @@ momentRouter.post(
   verifyLabelExists,
   addLabel
 );
+
+// 获取动态的配图
+momentRouter.get("/images/:filename", fileInfo);
 
 module.exports = momentRouter;
