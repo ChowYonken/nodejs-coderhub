@@ -11,6 +11,11 @@ class FileService {
     ]);
     return result;
   }
+  async getAvatarByUserId(userId) {
+    const statement = `SELECT * FROM avatar WHERE user_id = ?;`;
+    const [result] = await connections.execute(statement, [userId]);
+    return result;
+  }
 }
 
 module.exports = new FileService();
