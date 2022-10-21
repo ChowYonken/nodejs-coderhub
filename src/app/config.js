@@ -12,6 +12,7 @@ const PUBLIC_KEY = fs.readFileSync(
 dotenv.config();
 
 module.exports = {
+  APP_HOST,
   APP_PORT,
   MYSQL_HOST,
   MYSQL_PORT,

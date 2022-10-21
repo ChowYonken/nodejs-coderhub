@@ -1,6 +1,6 @@
 const fileService = require("../service/file.service");
-const fs = require("fs");
-const { AVATAR_PATH } = require("../constants/file-path");
+const userService = require("../service/user.service");
+const { APP_HOST, APP_PORT } = require("../app/config");
 
 class FileController {
   // 保存图片信息
@@ -9,16 +9,21 @@ class FileController {
     const { filename, mimetype, size } = ctx.req.file;
     const { id } = ctx.user;
     // 2.将图像信息保存到数据库中
-    const result = await fileService.createAvatar(filename, mimetype, size, id);
-    ctx.body = result;
+    await fileService.createAvatar(filename, mimetype, size, id);
+    // 3.将地址保存到user表中
+    const avatarUrl = `${APP_HOST}:${APP_PORT}/users/${id}/avatar`;
+    await userService.updateAvatarUrlById(avatarUrl, id);
+    ctx.body = "上传头像成功";
   }
-  // 获取图片地址
-  async avatarInfo(ctx, next) {
-    const { userId } = ctx.params;
-    const [avatarInfo] = await fileService.getAvatarByUserId(userId);
-    // 设置图片类型
-    ctx.response.set("content-type", avatarInfo.mimetype);
-    ctx.body = fs.createReadStream(`${AVATAR_PATH}/${avatarInfo.filename}`);
+  async savePictureInfo(ctx, next) {
+    const files = ctx.req.files;
+    const { id } = ctx.user;
+    const { momentId } = ctx.request.query;
+    for (let file of files) {
+      const { filename, mimetype, size } = file;
+      await fileService.createFile(filename, mimetype, size, id, momentId);
+    }
+    ctx.body = "上传动态配图成功";
   }
 }
 
